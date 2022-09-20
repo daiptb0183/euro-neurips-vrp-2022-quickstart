@@ -1,5 +1,6 @@
 # Solver for Dynamic VRPTW, baseline strategy is to use the static solver HGS-VRPTW repeatedly
 import argparse
+from pydoc import visiblename
 import subprocess
 import sys
 import os
@@ -11,6 +12,9 @@ import functools
 import tools
 from environment import VRPEnvironment, ControllerEnvironment
 from baselines.strategies import STRATEGIES
+
+
+import visualization
 
 def solve_static_vrptw(instance, time_limit=3600, tmp_dir="tmp", seed=1, initial_solution=None):
 
@@ -143,6 +147,9 @@ def run_baseline(args, env, oracle_solution=None, strategy=None, seed=None):
             num_requests_open = len(epoch_instance['request_idx']) - 1
             num_requests_postponed = num_requests_open - num_requests_dispatched
             log(f" {num_requests_dispatched:3d}/{num_requests_open:3d} dispatched and {num_requests_postponed:3d}/{num_requests_open:3d} postponed | Routes: {len(epoch_solution):2d} with cost {cost:6d}")
+
+        # Plotting solutions
+        visualization.plot_epoch_solution(epoch_instance, epoch_solution)
 
         # Submit solution to environment
         observation, reward, done, info = env.step(epoch_solution)
