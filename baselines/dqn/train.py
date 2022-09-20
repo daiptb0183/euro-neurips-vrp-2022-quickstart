@@ -4,6 +4,8 @@ import argparse
 import json
 import random
 
+os.chdir('../..')
+
 sys.path.insert(0, os.getcwd())
 import tools
 from agent import DQNAgent
