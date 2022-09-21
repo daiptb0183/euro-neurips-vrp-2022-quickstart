@@ -70,4 +70,3 @@ def plot_epoch_solution(epoch_instance, epoch_solution):
 
     plt.savefig("sol_image.png")
     ax.clear()
-    print("Done")
