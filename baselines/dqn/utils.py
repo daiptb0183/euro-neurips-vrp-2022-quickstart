@@ -33,13 +33,28 @@ def get_request_features(instance_observation, instance_static_info, k_nearest=1
     dist_to_nearest = d[row_ind, ind_nearest_sorted]
 
     # n x d
-    basic_request_features = np.concatenate((
+    """ basic_request_features = np.concatenate((
         epoch_instance['is_depot'][:, None], 
         epoch_instance['coords'] / 1000, 
         epoch_instance['demands'][:, None] / 10, 
         epoch_instance['time_windows'] / 10000, 
         epoch_instance['service_times'][:, None] / 10000, 
-        epoch_instance['must_dispatch'][:, None]), -1)
+        epoch_instance['must_dispatch'][:, None]), -1) """
+
+
+    average_demand = instance_static_info["dynamic_context"]["demands"].mean()
+    average_demand_tw_duration = (instance_static_info["dynamic_context"]['time_windows'][:,1]-instance_static_info["dynamic_context"]['time_windows'][:,0]).mean()
+    average_service_time = instance_static_info["dynamic_context"]['service_times'].mean()
+    total_horizon_time = instance_static_info["num_epochs"]*3600
+
+
+    basic_request_features = np.concatenate((
+        epoch_instance['demands'][:, None] / average_demand,
+        (epoch_instance['time_windows'][:,1] - epoch_instance['time_windows'][:,0])[:, None] / average_demand_tw_duration,
+        epoch_instance['service_times'][:, None] / average_service_time,
+        (epoch_instance['time_windows'][:,1]-instance_observation["current_time"])[:, None]  / total_horizon_time,
+        np.sum(epoch_instance['must_dispatch'][ind_nearest_sorted], axis=1)[:, None] / 10,
+        ), -1)
 
     # TODO add more, for now only avg duration to nearest n x 1
     advanced_request_features = dist_to_nearest.mean(-1)[:, None]
@@ -62,12 +77,15 @@ def get_request_features(instance_observation, instance_static_info, k_nearest=1
     ), -1)
 
     # global features
+    average_distance_from_depot = instance_static_info["dynamic_context"]["duration_matrix"][0].mean()
+
     global_features = np.concatenate((
         np.array([
             (instance_static_info['end_epoch'] - instance_observation['current_epoch']) / 10,
             instance_observation['current_time'] / 10000,
             instance_observation['planning_starttime'] / 10000,
             d.shape[0] / 1000,
+            average_distance_from_depot / 10000,
         ]),
         basic_request_features[:, 1:].mean(0)
     ), -1)
