@@ -4,7 +4,7 @@ import argparse
 import json
 import random
 
-os.chdir('../..')
+os.chdir('./')
 
 sys.path.insert(0, os.getcwd())
 import tools
