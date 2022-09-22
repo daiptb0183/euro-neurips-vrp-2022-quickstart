@@ -25,7 +25,7 @@
         "strategy_seed": 1
     },
     "model": {
-        "num_hiddens": 128,
+        "num_hiddens": 512,
         "k_nearest": 10
     }
 }
