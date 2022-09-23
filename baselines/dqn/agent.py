@@ -176,7 +176,7 @@ class DQNAgent:
                                 ) * self.epsilon_decay
                             )
 
-                        print(f"Epsilon: {self.epsilon}")
+                        #print(f"Epsilon: {self.epsilon}")
                         epsilons.append(self.epsilon)
 
                         
@@ -186,21 +186,19 @@ class DQNAgent:
                         # perform multiple gradient steps
                             for i in range(self.steps_per_update):
                                 loss, gradnorm = self.update_model()
-                                if i == 0:
-                                    print(f"Loss: {loss:.2f}, gradient norm: {gradnorm:.2f}")
+                                # if i == 0:
+                                #     print(f"Loss: {loss:.2f}, gradient norm: {gradnorm:.2f}")
                                 losses.append(loss)
                                 update_cnt += 1
 
                                 # if hard update is needed
-                                print(f"update_cnt: {update_cnt}")
+                                #print(f"update_cnt: {update_cnt}")
                                 if update_cnt % self.target_update == 0:
                                     self._target_hard_update()
 
                                 
                     scores.append(score)   
                     score = 0
-
-                    # if training is ready
                     
 
                 if config.get('ckpt_dir', None) is not None:
