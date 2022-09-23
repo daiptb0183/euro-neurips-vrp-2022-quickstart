@@ -181,20 +181,20 @@ class DQNAgent:
 
                         
 
-                        if len(self.memory) >= self.batch_size:
-                        # Since each episode adds 100s of transitions and takes a long time
-                        # perform multiple gradient steps
-                            for i in range(self.steps_per_update):
-                                loss, gradnorm = self.update_model()
-                                # if i == 0:
-                                #     print(f"Loss: {loss:.2f}, gradient norm: {gradnorm:.2f}")
-                                losses.append(loss)
-                                update_cnt += 1
+                    if len(self.memory) >= self.batch_size:
+                    # Since each episode adds 100s of transitions and takes a long time
+                    # perform multiple gradient steps
+                        for i in range(self.steps_per_update):
+                            loss, gradnorm = self.update_model()
+                            if i == 0:
+                                print(f"Loss: {loss:.2f}, gradient norm: {gradnorm:.2f}")
+                            losses.append(loss)
+                            update_cnt += 1
 
-                                # if hard update is needed
-                                #print(f"update_cnt: {update_cnt}")
-                                if update_cnt % self.target_update == 0:
-                                    self._target_hard_update()
+                            # if hard update is needed
+                            #print(f"update_cnt: {update_cnt}")
+                            if update_cnt % self.target_update == 0:
+                                self._target_hard_update()
 
                                 
                     scores.append(score)   
@@ -203,9 +203,9 @@ class DQNAgent:
 
                 if config.get('ckpt_dir', None) is not None:
                     print(f"Writing checkpoint to {config['ckpt_dir']}")
-                    torch.save(self.dqn_target.state_dict(), os.path.join(config['ckpt_dir'], 'model.pth'))
+                    torch.save(self.dqn.state_dict(), os.path.join(config['ckpt_dir'], 'model.pth'))
 
-            print("Validating...")
+            """ print("Validating...")
             avg_reward = self.evaluate(validation_set, self.validation_config)
             print(f"Avg reward: {avg_reward:.2f}, avg cost: {-avg_reward:.2f}")
 
@@ -215,7 +215,7 @@ class DQNAgent:
 
         print("Testing...")
         avg_reward = self.evaluate(test_set, self.test_config)
-        print(f"Avg reward: {avg_reward:.2f}, avg cost: {-avg_reward:.2f}")
+        print(f"Avg reward: {avg_reward:.2f}, avg cost: {-avg_reward:.2f}") """
 
     @torch.no_grad()
     def evaluate(self, dataset: List, config: Dict):
