@@ -48,7 +48,10 @@ def get_request_features(instance_observation, instance_static_info, k_nearest=1
     total_horizon_time = instance_static_info["num_epochs"]*3600
 
 
+    average_distance_from_depot = instance_static_info["dynamic_context"]["duration_matrix"][0].mean()
+
     basic_request_features = np.concatenate((
+        epoch_instance['duration_matrix'][0][:, None] / average_distance_from_depot,
         epoch_instance['demands'][:, None] / average_demand,
         (epoch_instance['time_windows'][:,1] - epoch_instance['time_windows'][:,0])[:, None] / average_demand_tw_duration,
         epoch_instance['service_times'][:, None] / average_service_time,
@@ -77,7 +80,7 @@ def get_request_features(instance_observation, instance_static_info, k_nearest=1
     ), -1) """
 
     # global features
-    average_distance_from_depot = instance_static_info["dynamic_context"]["duration_matrix"][0].mean()
+    
 
     """ global_features = np.concatenate((
         np.array([
