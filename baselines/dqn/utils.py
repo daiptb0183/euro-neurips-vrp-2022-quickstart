@@ -57,29 +57,29 @@ def get_request_features(instance_observation, instance_static_info, k_nearest=1
         ), -1)
 
     # TODO add more, for now only avg duration to nearest n x 1
-    advanced_request_features = dist_to_nearest.mean(-1)[:, None]
+    """ advanced_request_features = dist_to_nearest.mean(-1)[:, None] """
 
     # index n x d features by n x k indices gives n x k x d tensor
     # concate n x k x 1 durations feature for n x k x (d+1) matrix
     # then reshape to n x (k x (d + 1))
-    nearest_neighb_request_features = np.pad(
+    """ nearest_neighb_request_features = np.pad(
             np.concatenate((
             basic_request_features[ind_nearest_sorted],
             dist_to_nearest[:, :, None],
         ), -1),
         ((0, 0), (0, max(k_nearest - d.shape[-1], 0)), (0, 0))
-    ).reshape(d.shape[0], -1)
+    ).reshape(d.shape[0], -1) """
 
-    all_request_features = np.concatenate((
+    """ all_request_features = np.concatenate((
         basic_request_features,
         advanced_request_features,
         nearest_neighb_request_features
-    ), -1)
+    ), -1) """
 
     # global features
     average_distance_from_depot = instance_static_info["dynamic_context"]["duration_matrix"][0].mean()
 
-    global_features = np.concatenate((
+    """ global_features = np.concatenate((
         np.array([
             (instance_static_info['end_epoch'] - instance_observation['current_epoch']) / 10,
             instance_observation['current_time'] / 10000,
@@ -88,6 +88,14 @@ def get_request_features(instance_observation, instance_static_info, k_nearest=1
             average_distance_from_depot / 10000,
         ]),
         basic_request_features[:, 1:].mean(0)
-    ), -1)
+    ), -1) """
 
-    return torch.tensor(all_request_features, dtype=torch.float32), torch.tensor(global_features, dtype=torch.float32)
+    global_features = np.array([
+            (instance_static_info['end_epoch'] - instance_observation['current_epoch']) / 10,
+            instance_observation['current_time'] / 10000,
+            instance_observation['planning_starttime'] / 10000,
+            d.shape[0] / 1000,
+            average_distance_from_depot / 10000,
+                                ])
+
+    return torch.tensor(basic_request_features, dtype=torch.float32), torch.tensor(global_features, dtype=torch.float32)

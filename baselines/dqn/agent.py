@@ -159,50 +159,53 @@ class DQNAgent:
                 for j in range(repeat_instances):
                     if repeat_instances > 1:
                         print(f"Rep {j+1}/{repeat_instances}")
-                    try:
-                        state, _ = self.env.reset(instance)
-                        done = False
-                        while not done:
-                            action = self.select_action(state)
-                            next_state, reward, done, _ = self.env.step(action)
-                            self.memory.store(state, action, reward, next_state, done)
 
-                            state = next_state
-                            score += reward
+                    state, _ = self.env.reset(instance)
+                    done = False
+                    while not done:
+                        action = self.select_action(state)
+                        next_state, reward, done, _ = self.env.step(action)
+                        self.memory.store(state, action, reward, next_state, done)
 
-                        scores.append(score)
-                    except Exception as e:
-                        # In case of unexpected failure, skip and continue training
-                        print("------------ EXCEPTION -----------")
-                        print(e)
+                        state = next_state
+                        score += reward
+
+                        self.epsilon = max(
+                                self.min_epsilon, self.epsilon - (
+                                    self.max_epsilon - self.min_epsilon
+                                ) * self.epsilon_decay
+                            )
+
+                        print(f"Epsilon: {self.epsilon}")
+                        epsilons.append(self.epsilon)
+
+                        
+
+                        if len(self.memory) >= self.batch_size:
+                        # Since each episode adds 100s of transitions and takes a long time
+                        # perform multiple gradient steps
+                            for i in range(self.steps_per_update):
+                                loss, gradnorm = self.update_model()
+                                if i == 0:
+                                    print(f"Loss: {loss:.2f}, gradient norm: {gradnorm:.2f}")
+                                losses.append(loss)
+                                update_cnt += 1
+
+                                # if hard update is needed
+                                print(f"update_cnt: {update_cnt}")
+                                if update_cnt % self.target_update == 0:
+                                    self._target_hard_update()
+
+                                
+                    scores.append(score)   
                     score = 0
 
                     # if training is ready
-                    if len(self.memory) >= self.batch_size:
-                        # Since each episode adds 100s of transitions and takes a long time
-                        # perform multiple gradient steps
-                        for i in range(self.steps_per_update):
-                            loss, gradnorm = self.update_model()
-                            if i == 0:
-                                print(f"Loss: {loss:.2f}, gradient norm: {gradnorm:.2f}")
-                            losses.append(loss)
-                            update_cnt += 1
+                    
 
-                        # linearly decrease epsilon
-                        self.epsilon = max(
-                            self.min_epsilon, self.epsilon - (
-                                self.max_epsilon - self.min_epsilon
-                            ) * self.epsilon_decay
-                        )
-                        epsilons.append(self.epsilon)
-
-                        # if hard update is needed
-                        if update_cnt % self.target_update == 0:
-                            self._target_hard_update()
-
-            if config.get('ckpt_dir', None) is not None:
-                print(f"Writing checkpoint to {config['ckpt_dir']}")
-                torch.save(self.dqn.state_dict(), os.path.join(config['ckpt_dir'], 'model.pth'))
+                if config.get('ckpt_dir', None) is not None:
+                    print(f"Writing checkpoint to {config['ckpt_dir']}")
+                    torch.save(self.dqn_target.state_dict(), os.path.join(config['ckpt_dir'], 'model.pth'))
 
             print("Validating...")
             avg_reward = self.evaluate(validation_set, self.validation_config)

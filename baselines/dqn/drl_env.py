@@ -22,7 +22,7 @@ class DRLEnv(gym.Env):
     def __init__(self, config, **kwargs):
         self.config = config["training"]
         self.features_k_nearest = config['model']['k_nearest']
-        self.num_of_feats = 75
+        self.num_of_feats = 10
         self.counter = 0
         self.seed = 0
         self.instance = None
