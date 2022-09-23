@@ -33,10 +33,16 @@ def plot_epoch_solution(epoch_instance, epoch_solution):
     for color_index, vehicle_route in enumerate(epoch_solution):
         for idx, request_idx in enumerate(vehicle_route):
             real_index = np.where(epoch_instance["request_idx"] == request_idx)[0][0]
+            if epoch_instance["must_dispatch"][real_index]:
+                color = "red"
+            else:
+                color = "k"
+                
+            
             ax.scatter(epoch_instance["coords"][real_index][0],
                            epoch_instance["coords"][real_index][1],
                             marker="o", 
-                            color="k", 
+                            color=color, 
                             s=20)
             
             if idx == 0:
