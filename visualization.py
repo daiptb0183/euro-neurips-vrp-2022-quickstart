@@ -27,7 +27,7 @@ def plot_epoch_solution(epoch_instance, epoch_solution):
                 epoch_instance["coords"][:,1],
                 marker="o", 
                 color="grey", 
-                s=20)
+                s=epoch_instance["demands"]*2)
 
 
     for color_index, vehicle_route in enumerate(epoch_solution):
@@ -43,7 +43,7 @@ def plot_epoch_solution(epoch_instance, epoch_solution):
                            epoch_instance["coords"][real_index][1],
                             marker="o", 
                             color=color, 
-                            s=20)
+                            s=epoch_instance["demands"][real_index]*2)
             
             if idx == 0:
                             
