@@ -149,7 +149,7 @@ def run_baseline(args, env, oracle_solution=None, strategy=None, seed=None):
             log(f" {num_requests_dispatched:3d}/{num_requests_open:3d} dispatched and {num_requests_postponed:3d}/{num_requests_open:3d} postponed | Routes: {len(epoch_solution):2d} with cost {cost:6d}")
 
         # Plotting solutions
-        visualization.plot_epoch_solution(epoch_instance, epoch_solution)
+        # visualization.plot_epoch_solution(epoch_instance, epoch_solution)
 
         # Submit solution to environment
         observation, reward, done, info = env.step(epoch_solution)
