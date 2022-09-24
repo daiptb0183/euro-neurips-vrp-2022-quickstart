@@ -203,7 +203,7 @@ class DQNAgent:
 
                 if config.get('ckpt_dir', None) is not None:
                     print(f"Writing checkpoint to {config['ckpt_dir']}")
-                    torch.save(self.dqn.state_dict(), os.path.join(config['ckpt_dir'], 'model.pth'))
+                    torch.save(self.dqn_target.state_dict(), os.path.join(config['ckpt_dir'], 'model.pth'))
 
             """ print("Validating...")
             avg_reward = self.evaluate(validation_set, self.validation_config)
