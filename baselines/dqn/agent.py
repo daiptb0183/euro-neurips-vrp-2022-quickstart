@@ -82,7 +82,7 @@ class DQNAgent:
         self.max_epsilon = config.get('max_epsilon', 0.5)
         self.min_epsilon = config.get('min_epsilon', 0.01)
         self.target_update = config['target_update']
-        self.gamma = config.get('gamma', 1)
+        self.gamma = config.get('gamma', 0.9)
         self.max_gradient_norm = config.get('max_gradient_norm', 1e9)
         # device: cpu / gpu
         self.device = torch.device(

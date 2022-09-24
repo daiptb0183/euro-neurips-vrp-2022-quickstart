@@ -97,9 +97,9 @@ def get_request_features(instance_observation, instance_static_info, k_nearest=1
 
     global_features = np.array([
             (instance_static_info['end_epoch'] - instance_observation['current_epoch']) / 10,
-            #instance_observation['current_time'] / 10000,
-            #instance_observation['planning_starttime'] / 10000,
-            #d.shape[0] / 1000,
+            instance_observation['current_time'] / 10000,
+            instance_observation['planning_starttime'] / 10000,
+            d.shape[0] / 1000,
             average_distance_from_depot / 10000,
                                 ])
 
