@@ -77,12 +77,12 @@ class DQNAgent:
         self.memory = ReplayBuffer(NUM_FEATS, config['memory_size'], config['batch_size'])
         self.batch_size = config['batch_size']
         self.steps_per_update = config['steps_per_update']
-        self.epsilon = config.get('max_epsilon', 1.0)
+        self.epsilon = config.get('max_epsilon', 0.5)
         self.epsilon_decay = config['epsilon_decay']
-        self.max_epsilon = config.get('max_epsilon', 1.0)
-        self.min_epsilon = config.get('min_epsilon', 0.1)
+        self.max_epsilon = config.get('max_epsilon', 0.5)
+        self.min_epsilon = config.get('min_epsilon', 0.01)
         self.target_update = config['target_update']
-        self.gamma = config.get('gamma', 0.99)
+        self.gamma = config.get('gamma', 1)
         self.max_gradient_norm = config.get('max_gradient_norm', 1e9)
         # device: cpu / gpu
         self.device = torch.device(
@@ -180,21 +180,20 @@ class DQNAgent:
                         epsilons.append(self.epsilon)
 
                         
+                        if len(self.memory) >= self.batch_size:
+                        # Since each episode adds 100s of transitions and takes a long time
+                        # perform multiple gradient steps
+                            for i in range(self.steps_per_update):
+                                loss, gradnorm = self.update_model()
+                                if i == 0:
+                                    print(f"Loss: {loss:.2f}, gradient norm: {gradnorm:.2f}")
+                                losses.append(loss)
+                                update_cnt += 1
 
-                    if len(self.memory) >= self.batch_size:
-                    # Since each episode adds 100s of transitions and takes a long time
-                    # perform multiple gradient steps
-                        for i in range(self.steps_per_update):
-                            loss, gradnorm = self.update_model()
-                            if i == 0:
-                                print(f"Loss: {loss:.2f}, gradient norm: {gradnorm:.2f}")
-                            losses.append(loss)
-                            update_cnt += 1
-
-                            # if hard update is needed
-                            #print(f"update_cnt: {update_cnt}")
-                            if update_cnt % self.target_update == 0:
-                                self._target_hard_update()
+                                # if hard update is needed
+                                #print(f"update_cnt: {update_cnt}")
+                                if update_cnt % self.target_update == 0:
+                                    self._target_hard_update()
 
                                 
                     scores.append(score)   

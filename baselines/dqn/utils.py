@@ -50,14 +50,17 @@ def get_request_features(instance_observation, instance_static_info, k_nearest=1
 
     average_distance_from_depot = instance_static_info["dynamic_context"]["duration_matrix"][0].mean()
 
-    basic_request_features = np.concatenate((
-        epoch_instance['duration_matrix'][0][:, None] / average_distance_from_depot,
-        epoch_instance['demands'][:, None] / average_demand,
-        (epoch_instance['time_windows'][:,1] - epoch_instance['time_windows'][:,0])[:, None] / average_demand_tw_duration,
-        epoch_instance['service_times'][:, None] / average_service_time,
-        (epoch_instance['time_windows'][:,1]-instance_observation["current_time"])[:, None]  / total_horizon_time,
-        np.sum(epoch_instance['must_dispatch'][ind_nearest_sorted], axis=1)[:, None] / 10,
-        ), -1)
+    basic_request_features = np.concatenate((epoch_instance['duration_matrix'][0][:, None] / average_distance_from_depot, \
+        epoch_instance['demands'][:, None] / average_demand,\
+            (epoch_instance['time_windows'][:,1] - epoch_instance['time_windows'][:,0])[:, None] / average_demand_tw_duration, \
+                epoch_instance['service_times'][:, None] / average_service_time, \
+                    (epoch_instance['time_windows'][:,1]-instance_observation["current_time"])[:, None]  / total_horizon_time, \
+                        np.sum(epoch_instance['must_dispatch'][ind_nearest_sorted], axis=1)[:, None] / 10), -1)
+    """ (epoch_instance['time_windows'][:,1] - epoch_instance['time_windows'][:,0])[:, None] / average_demand_tw_duration,
+    epoch_instance['service_times'][:, None] / average_service_time,
+    (epoch_instance['time_windows'][:,1]-instance_observation["current_time"])[:, None]  / total_horizon_time,
+    np.sum(epoch_instance['must_dispatch'][ind_nearest_sorted], axis=1)[:, None] / 10,
+    ), -1) """
 
     # TODO add more, for now only avg duration to nearest n x 1
     """ advanced_request_features = dist_to_nearest.mean(-1)[:, None] """
@@ -95,9 +98,9 @@ def get_request_features(instance_observation, instance_static_info, k_nearest=1
 
     global_features = np.array([
             (instance_static_info['end_epoch'] - instance_observation['current_epoch']) / 10,
-            instance_observation['current_time'] / 10000,
-            instance_observation['planning_starttime'] / 10000,
-            d.shape[0] / 1000,
+            #instance_observation['current_time'] / 10000,
+            #instance_observation['planning_starttime'] / 10000,
+            #d.shape[0] / 1000,
             average_distance_from_depot / 10000,
                                 ])
 
