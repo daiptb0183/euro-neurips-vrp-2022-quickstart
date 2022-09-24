@@ -165,7 +165,8 @@ class DQNAgent:
                     while not done:
                         action = self.select_action(state)
                         next_state, reward, done, _ = self.env.step(action)
-                        self.memory.store(state, action, reward, next_state, done)
+                        if not done:
+                            self.memory.store(state, action, reward, next_state, done)
 
                         state = next_state
                         score += reward
