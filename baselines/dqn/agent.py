@@ -190,8 +190,15 @@ class DQNAgent:
                                     self._target_hard_update()
 
                                     if config.get('ckpt_dir', None) is not None:
+                                        
+                                        print("Validating...")
+                                        avg_reward = self.evaluate(validation_set, self.validation_config)
+                                        print(f"Avg reward: {avg_reward:.2f}, avg cost: {-avg_reward:.2f}")
+
+                                        avg_reward_int = int(avg_reward)
+
                                         print(f"Writing checkpoint to {config['ckpt_dir']}")
-                                        torch.save(self.dqn_target.state_dict(), os.path.join(config['ckpt_dir'], 'model.pth'))
+                                        torch.save(self.dqn_target.state_dict(), os.path.join(config['ckpt_dir'], f'model_{update_cnt}_{avg_reward_int}.pth'))
 
                                 
                     self.epsilon = max(
