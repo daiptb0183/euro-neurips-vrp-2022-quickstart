@@ -141,6 +141,7 @@ class DQNAgent:
         losses = []
         scores = []
         score = 0
+        epoch_counter = 0
 
         config = self.train_config
 
@@ -163,6 +164,7 @@ class DQNAgent:
                     state, _ = self.env.reset(instance)
                     done = False
                     while not done:
+                        epoch_counter += 1
                         action = self.select_action(state)
                         next_state, reward, done, _ = self.env.step(action)
                         if not done:
@@ -178,7 +180,7 @@ class DQNAgent:
                             for i in range(self.steps_per_update):
                                 loss, gradnorm = self.update_model()
                                 if i == 0:
-                                    print(f"Loss: {loss:.2f}, gradient norm: {gradnorm:.2f}")
+                                    print(f"Loss: {loss:.2f}, gradient norm: {gradnorm:.2f} | epoch_counter {epoch_counter}| update_cnt {update_cnt}")
                                 losses.append(loss)
                                 update_cnt += 1
 
@@ -186,6 +188,10 @@ class DQNAgent:
                                 #print(f"update_cnt: {update_cnt}")
                                 if update_cnt % self.target_update == 0:
                                     self._target_hard_update()
+
+                                    if config.get('ckpt_dir', None) is not None:
+                                        print(f"Writing checkpoint to {config['ckpt_dir']}")
+                                        torch.save(self.dqn_target.state_dict(), os.path.join(config['ckpt_dir'], 'model.pth'))
 
                                 
                     self.epsilon = max(
@@ -199,11 +205,6 @@ class DQNAgent:
 
                     scores.append(score)   
                     score = 0
-                    
-
-                if config.get('ckpt_dir', None) is not None:
-                    print(f"Writing checkpoint to {config['ckpt_dir']}")
-                    torch.save(self.dqn_target.state_dict(), os.path.join(config['ckpt_dir'], 'model.pth'))
 
             """ print("Validating...")
             avg_reward = self.evaluate(validation_set, self.validation_config)
