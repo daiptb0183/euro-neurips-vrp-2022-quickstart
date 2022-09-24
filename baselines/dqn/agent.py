@@ -170,15 +170,6 @@ class DQNAgent:
                         state = next_state
                         score += reward
 
-                        self.epsilon = max(
-                                self.min_epsilon, self.epsilon - (
-                                    self.max_epsilon - self.min_epsilon
-                                ) * self.epsilon_decay
-                            )
-
-                        #print(f"Epsilon: {self.epsilon}")
-                        epsilons.append(self.epsilon)
-
                         
                         if len(self.memory) >= self.batch_size:
                         # Since each episode adds 100s of transitions and takes a long time
@@ -196,6 +187,15 @@ class DQNAgent:
                                     self._target_hard_update()
 
                                 
+                    self.epsilon = max(
+                                self.min_epsilon, self.epsilon - (
+                                    self.max_epsilon - self.min_epsilon
+                                ) * self.epsilon_decay
+                            )
+
+                    #print(f"Epsilon: {self.epsilon}")
+                    epsilons.append(self.epsilon)
+
                     scores.append(score)   
                     score = 0
                     
