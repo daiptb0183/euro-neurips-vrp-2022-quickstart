@@ -261,9 +261,9 @@ class DQNAgent:
 
         # calculate dqn loss
         
-        loss_func = torch.nn.MSELoss()
+        loss = F.l1_loss(curr_q_value, target) 
 
-        loss = loss_func(curr_q_value, target)
+        # loss = loss_func(curr_q_value, target)
 
         return loss
 
