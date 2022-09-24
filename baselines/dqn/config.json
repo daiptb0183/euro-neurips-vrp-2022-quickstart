@@ -1,10 +1,10 @@
 {
     "training": {
         "seed": 1,
-        "memory_size": 1000000,
-        "batch_size": 64,
-        "target_update": 50000,
-        "steps_per_update": 10,
+        "memory_size": 100000,
+        "batch_size": 32,
+        "target_update": 20000,
+        "steps_per_update": 1,
         "epsilon_decay": 0.001,
         "num_epochs": 100,
         "instances_dir": "instances",
@@ -25,7 +25,7 @@
         "strategy_seed": 1
     },
     "model": {
-        "num_hiddens": 128,
+        "num_hiddens": 512,
         "k_nearest": 10
     }
 }
