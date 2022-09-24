@@ -9,7 +9,7 @@
         "num_epochs": 100,
         "instances_dir": "instances",
         "num_instances_per_epoch": 100,
-        "epoch_tlim": 1,
+        "epoch_tlim": 10,
         "optimizer": {
             "lr": 1e-4
         },

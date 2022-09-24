@@ -127,11 +127,11 @@ class DQNAgent:
         loss = self._compute_dqn_loss(samples)
 
         self.optimizer.zero_grad()
-        # loss.backward()
+        loss.backward()
         for group in self.optimizer.param_groups:
             norm = torch.nn.utils.clip_grad_norm_(group['params'], self.max_gradient_norm)
         self.optimizer.step()
-        
+
         return loss.item(), norm.item()
 
     def train(self, train_set: List, validation_set: List, test_set: List):
